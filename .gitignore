@@ -1,0 +1,7 @@
+# Root .gitignore
+node_modules/
+.expo/
+app/node_modules/
+web/node_modules/
+*.log
+.env

@@ -51,7 +51,7 @@ export default function GenderSelection() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#517aeb] ">
+    <SafeAreaView className="flex-1 bg-[#0c4799] ">
 
         <View className="flex-row items-center px-6 py-4  rounded-b-3xl">
         <Image

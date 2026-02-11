@@ -1,7 +1,22 @@
 // app/serviceReq/form.js
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Alert,
+} from "react-native";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { supabase } from '../../lib/supabase';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
@@ -10,32 +25,41 @@ const FormScreen = () => {
   const router = useRouter();
   const { serviceId, serviceName, subServiceId, subServiceName } = params;
 
-  const [providers, setProviders] = useState([]);
   const [formData, setFormData] = useState({
     full_name: '',
     address: '',
     birthdate: '',
     guardian_name: '',
-    // provider_id: '',
-    preferred_date: ''
+    contact_no: '',
+    preferred_date: '',
   });
 
-  useEffect(() => {
-    fetchProviders();
-  }, []);
+  const [showBirthPicker, setShowBirthPicker] = useState(false);
+  const [showPreferredPicker, setShowPreferredPicker] = useState(false);
 
-  const fetchProviders = async () => {
-    const { data, error } = await supabase.from('providers').select('*');
-    if (error) console.log(error);
-    else setProviders(data);
+  const handleChange = (key, value) => {
+    setFormData({ ...formData, [key]: value });
   };
 
-  const handleChange = (key, value) =>
-    setFormData({ ...formData, [key]: value });
-// !formData.provider_id || 
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0]; // YYYY-MM-DD
+  };
+
   const handleSubmit = async () => {
-    if (!formData.full_name || !formData.address || !formData.birthdate || !formData.preferred_date) {
+    if (
+      !formData.full_name ||
+      !formData.address ||
+      !formData.birthdate ||
+      !formData.guardian_name ||
+      !formData.contact_no ||
+      !formData.preferred_date
+    ) {
       Alert.alert('Error', 'Please fill all required fields.');
+      return;
+    }
+
+    if (formData.contact_no.length < 10) {
+      Alert.alert('Error', 'Please enter a valid contact number.');
       return;
     }
 
@@ -43,19 +67,29 @@ const FormScreen = () => {
       {
         ...formData,
         service_id: serviceId,
-        sub_service_id: subServiceId
+        sub_service_id: subServiceId,
       }
     ]);
 
-    if (error) Alert.alert('Error', 'Failed to submit request');
-    else {
+    if (error) {
+      Alert.alert('Error', 'Failed to submit request');
+    } else {
       Alert.alert('Success', 'Service request submitted!');
-      router.replace('/home'); // go back to Home
+      router.replace('/home');
     }
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          keyboardShouldPersistTaps="handled"
+        >
+
       {/* Header */}
       <View className="bg-white px-6 py-5 shadow-sm">
         <Text className="text-2xl font-bold text-gray-900">{serviceName}</Text>
@@ -65,6 +99,7 @@ const FormScreen = () => {
       {/* Form */}
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <View className="bg-white p-5 rounded-xl shadow-md">
+
           {/* Full Name */}
           <Text className="text-gray-800 font-semibold mb-1">Full Name *</Text>
           <TextInput
@@ -84,16 +119,33 @@ const FormScreen = () => {
           />
 
           {/* Birthdate */}
-          <Text className="text-gray-800 font-semibold mb-1">Birthdate (YYYY-MM-DD) *</Text>
-          <TextInput
-            placeholder="YYYY-MM-DD"
-            value={formData.birthdate}
-            onChangeText={text => handleChange('birthdate', text)}
-            className="border border-gray-300 rounded-md px-3 py-2 mb-4"
-          />
+          <Text className="text-gray-800 font-semibold mb-1">Birthdate *</Text>
+          <TouchableOpacity
+            onPress={() => setShowBirthPicker(true)}
+            className="border border-gray-300 rounded-md px-3 py-3 mb-4"
+          >
+            <Text className={formData.birthdate ? "text-black" : "text-gray-400"}>
+              {formData.birthdate || "Select birthdate"}
+            </Text>
+          </TouchableOpacity>
+
+          {showBirthPicker && (
+            <DateTimePicker
+              value={formData.birthdate ? new Date(formData.birthdate) : new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              maximumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setShowBirthPicker(false);
+                if (selectedDate) {
+                  handleChange('birthdate', formatDate(selectedDate));
+                }
+              }}
+            />
+          )}
 
           {/* Guardian Name */}
-          <Text className="text-gray-800 font-semibold mb-1">Guardian Name (Optional)</Text>
+          <Text className="text-gray-800 font-semibold mb-1">Guardian Name *</Text>
           <TextInput
             placeholder="Guardian Name"
             value={formData.guardian_name}
@@ -101,46 +153,56 @@ const FormScreen = () => {
             className="border border-gray-300 rounded-md px-3 py-2 mb-4"
           />
 
-          {/* Providers
-          <Text className="text-gray-800 font-semibold mb-2">Select Provider *</Text>
-          <View className="mb-4">
-            {providers.map(provider => (
-              <TouchableOpacity
-                key={provider.id}
-                onPress={() => handleChange('provider_id', provider.id)}
-                className={`py-2 px-3 rounded-md mb-2 border ${
-                  formData.provider_id === provider.id
-                    ? 'bg-blue-600 border-blue-600'
-                    : 'border-gray-300'
-                }`}
-              >
-                <Text className={`text-center font-medium ${
-                  formData.provider_id === provider.id ? 'text-white' : 'text-gray-800'
-                }`}>
-                  {provider.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View> */}
+          {/* Contact No */}
+          <Text className="text-gray-800 font-semibold mb-1">Contact No. *</Text>
+          <TextInput
+            placeholder="09XXXXXXXXX"
+            keyboardType="phone-pad"
+            value={formData.contact_no}
+            onChangeText={text => handleChange('contact_no', text)}
+            className="border border-gray-300 rounded-md px-3 py-2 mb-4"
+          />
 
           {/* Preferred Date */}
-          <Text className="text-gray-800 font-semibold mb-1">Preferred Date (YYYY-MM-DD) *</Text>
-          <TextInput
-            placeholder="YYYY-MM-DD"
-            value={formData.preferred_date}
-            onChangeText={text => handleChange('preferred_date', text)}
-            className="border border-gray-300 rounded-md px-3 py-2 mb-6"
-          />
+          <Text className="text-gray-800 font-semibold mb-1">Preferred Date *</Text>
+          <TouchableOpacity
+            onPress={() => setShowPreferredPicker(true)}
+            className="border border-gray-300 rounded-md px-3 py-3 mb-6"
+          >
+            <Text className={formData.preferred_date ? "text-black" : "text-gray-400"}>
+              {formData.preferred_date || "Select preferred date"}
+            </Text>
+          </TouchableOpacity>
+
+          {showPreferredPicker && (
+            <DateTimePicker
+              value={formData.preferred_date ? new Date(formData.preferred_date) : new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              minimumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setShowPreferredPicker(false);
+                if (selectedDate) {
+                  handleChange('preferred_date', formatDate(selectedDate));
+                }
+              }}
+            />
+          )}
 
           {/* Submit Button */}
           <TouchableOpacity
             onPress={handleSubmit}
             className="bg-blue-700 py-3 rounded-md"
           >
-            <Text className="text-center text-white font-bold text-lg">Submit Request</Text>
+            <Text className="text-center text-white font-bold text-lg">
+              Submit Request
+            </Text>
           </TouchableOpacity>
+
         </View>
       </ScrollView>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

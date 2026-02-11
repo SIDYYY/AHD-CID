@@ -5,7 +5,7 @@ export default function Login() {
   const router = useRouter();
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 20 }}>
+    <View className="flex-1 justify-center">
       <View className="items-center mt-3 mb-12 py-7">
         <Image
           source={require("../assets/images/CID-AHD-LOGO-rmvbg.png")}
@@ -16,20 +16,20 @@ export default function Login() {
       </View>
 
         {/* Inputs later */}
-        <View className="px-10">
+        <View className="px-10 bg-[#0c4799] p-10">
           <Pressable
             onPress={() => router.replace("/login")}
-            className="mb-5 bg-[#053F8E] py-3 rounded-3xl">
-            <Text className="text-white text-center font-bold text-lg">Login</Text>
+            className="mb-5 bg-[#fff] py-3 rounded-3xl">
+            <Text className="text text-center font-bold text-lg">Login</Text>
           </Pressable>
           <Pressable
             onPress={() => router.replace("/home")}
-            className="bg-[#053F8E] py-3 rounded-3xl">
-            <Text className="text-white text-center font-bold text-lg">Continue as Guest</Text>
+            className="bg-[#fff] py-3 rounded-3xl">
+            <Text className="text text-center font-bold text-lg">Continue as Guest</Text>
           </Pressable>
         </View>
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 18, textAlign: "center" }}>Don't have an account? </Text>
+        <View className="mt-10 flex-row items-center justify-center">
+          <Text className="text-xl">Don't have an account? </Text>
             <Pressable
               onPress={() => router.replace("/signUp")}>
               <Text className="text-[#053F8E] underline text-center font-semibold text-lg">Sign Up</Text>

@@ -7,7 +7,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#517aeb]">
+    <SafeAreaView className="flex-1 bg-[#0c4799]">
       {/* Header */}
       <View className="flex-row items-center px-6 py-4  rounded-b-3xl">
         <Image
@@ -32,7 +32,7 @@ export default function Home() {
         {/* Request Service Button */}
         <Pressable
           onPress={() => router.push("screens/services")}
-          className="bg-[#517aeb] py-6 rounded-xl items-center mb-6 shadow"
+          className="bg-[#0c4799] py-6 rounded-xl items-center mb-6 shadow"
         >
           <Text className="text-white font-bold text-lg">Request a Service</Text>
         </Pressable>

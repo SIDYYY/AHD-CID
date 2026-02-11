@@ -3,14 +3,18 @@ import React from 'react';
 import Login from "./screens/login";
 import Admin from "./pages/admin/adminDashboard";
 import Provider from "./pages/provider/providerDashboard";
+import Providers from "./pages/admin/providers";
+import Sidebar from "./pages/components/sidebar";
 // import Unauthorized from "./pages/Unauthorized";
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/provider" element={<Provider />} />
+      <Route path="/admin/adminDashboard" element={<Admin />} />
+      <Route path="/admin/providers" element={<Providers />} />
+      <Route path="/provider/providerDashboard" element={<Provider />} />
+      <Route path="/components/sidebar" element={<Sidebar />} />
       {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
     </Routes>
   );

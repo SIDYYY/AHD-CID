@@ -1,86 +1,58 @@
-// src/pages/Login.jsx
-import React, { useState } from 'react';
-import { supabase } from '../../supabase';
+// src/pages/admin/AdminDashboard.jsx
+import React, { useState } from "react";
+import { FiMenu } from "react-icons/fi";
+import Sidebar from "../components/sidebar";
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    try {
-      // Query the users table
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (error) throw error;
-
-      if (data.password === password) { // Plaintext for now; ideally hash this
-        alert(`Welcome ${data.full_name} (${data.role})`);
-        // redirect to admin page if admin
-        if (data.role === 'admin') {
-          window.location.href = '/admin'; // example
-        }
-      } else {
-        setError('Incorrect password');
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function AdminDashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-10 rounded-xl shadow-md w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">DASH Login</h2>
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar sidebarOpen={sidebarOpen} />
+      {/* Main content */}
+      <div className="flex-1 flex flex-col md:ml-64 transition-all duration-300">
+        {/* Header */}
+        <header className="flex items-center justify-between bg-white shadow-md px-6 py-4">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="md:hidden p-2 rounded-md hover:bg-gray-200"
+            >
+              <FiMenu size={24} />
+            </button>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+          </div>
 
-        {error && (
-          <p className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</p>
-        )}
+          <div className="flex items-center gap-4">
+            <span className="text-gray-600">Admin</span>
+            <img
+              src="/assets/images/admin-avatar.jpg"
+              alt="Admin Avatar"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          </div>
+        </header>
 
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+        {/* Dashboard content */}
+        <main className="flex-1 p-6 overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <h2 className="font-semibold text-lg mb-2">Total Users</h2>
+              <p className="text-3xl font-bold text-blue-900">150</p>
+            </div>
 
-        <div className="mb-6">
-          <label className="block mb-1 font-semibold">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <h2 className="font-semibold text-lg mb-2">Active Providers</h2>
+              <p className="text-3xl font-bold text-blue-900">42</p>
+            </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700 transition"
-          disabled={loading}
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+            <div className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+              <h2 className="font-semibold text-lg mb-2">Pending Requests</h2>
+              <p className="text-3xl font-bold text-blue-900">8</p>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

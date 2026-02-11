@@ -1,63 +1,115 @@
-import { View, Text, TextInput, Pressable, Image } from "react-native";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+// src/pages/Login.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabase";
+import bcrypt from "bcryptjs";
 
-export default function LoginInput() {
-  const router = useRouter();
+export default function Login() {
+  const navigate = useNavigate();
+
+  const [contact_no, setContactNo] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); // ✅ prevent page reload
+    setLoading(true);
+    setError("");
+
+    try {
+      // 1️⃣ Fetch user by contact number
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("contact_no", contact_no.trim())
+        .single();
+
+      if (error || !data) {
+        throw new Error("Invalid credentials");
+      }
+
+      // 2️⃣ Compare hashed password
+      const isMatch = await bcrypt.compare(password, data.password);
+      if (!isMatch) {
+        throw new Error("Invalid credentials");
+      }
+
+      // 3️⃣ Block mobile-only users
+      if (data.role === "user") {
+        throw new Error("This account is for mobile app use only");
+      }
+
+      // 4️⃣ Role-based redirect
+      if (data.role === "admin") {
+        navigate("/admin/adminDashboard");
+      } else if (data.role === "provider") {
+        navigate("/provider/providerDashboard");
+      } else {
+        throw new Error("Unauthorized role");
+      }
+
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <View className="flex-1 bg-white justify-center">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-10 rounded-xl shadow-md w-full max-w-md"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          DASH Login
+        </h2>
 
-      {/* Logo / Image */}
-      <View className=" items-center mt-8 mb-2 py-7">
-        <Image
-          source={require("../assets/images/CID-AHD-LOGO.jpg")}
-          style={{ width: 500, height: 300 }}
-          className="w-40 h-40"
-          resizeMode="contain"
-        />
-      </View>
+        {/* Error message */}
+        {error && (
+          <p className="bg-red-100 text-red-700 p-3 mb-4 rounded text-center">
+            {error}
+          </p>
+        )}
 
-
-      {/* Phone Number Input */}
-      <View className="p-5 bg-[#CFDBEB] rounded-2xl"> 
-      <View className="mt-8 mb-4 px-4">
-
-        <View className="flex-row items-center border border-[#053F8E] bg-[#CFDBEB] rounded-3xl px-4">
-          <Ionicons name="call-outline" size={20} color="#053F8E" />
-          <TextInput
-            placeholder="Enter your phone number"
-            keyboardType="phone-pad"
-            className="flex-1 py-3 pl-3 text-base text-gray-800"
+        {/* Contact Number */}
+        <div className="mb-4">
+          <label className="block mb-1 font-semibold">
+            Contact Number
+          </label>
+          <input
+            type="tel"
+            value={contact_no}
+            onChange={(e) => setContactNo(e.target.value)}
+            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
           />
-        </View>
-      </View>
+        </div>
 
-      {/* Password Input */}
-      <View className="mb-12 px-4">
-
-
-        <View className="flex-row items-center border border-[#053F8E] bg-[#CFDBEB] rounded-3xl px-4">
-          <Ionicons name="lock-closed-outline" size={20} color="#053F8E" />
-          <TextInput
-            placeholder="Enter your password"
-            secureTextEntry
-            className="flex-1 py-3 pl-3 text-base text-gray-800"
+        {/* Password */}
+        <div className="mb-6">
+          <label className="block mb-1 font-semibold">
+            Password
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
           />
-        </View>
-      </View>
+        </div>
 
-      {/* Login Button */}
-      <View className="px-10">
-        <Pressable
-          onPress={() => router.replace("/home")}
-          className="bg-[#053F8E] py-3 rounded-3xl">
-          <Text className="text-white text-center font-bold text-lg">
-            Login
-          </Text>
-        </Pressable>
-      </View>
-    </View>
-    </View>
+        {/* Login Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </div>
   );
 }

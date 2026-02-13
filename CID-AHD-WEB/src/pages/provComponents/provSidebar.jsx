@@ -16,25 +16,25 @@ export default function AdminSidebar({ sidebarOpen }) {
         ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} 
         fixed md:relative h-full`}
     >
-      <div className="text-2xl font-bold mb-8 text-center">ADMIN</div>
+      <div className="text-2xl font-bold mb-8 text-center">FACILITY</div>
 
       <nav className="flex flex-col gap-3">
         <button
-          onClick={() => navigate("/admin/adminDashboard")}
+          onClick={() => navigate("/provider/providerDashboard")}
           className={`flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-800 transition ${
-            isActive("/admin/adminDashboard") ? "bg-blue-700" : ""
+            isActive("/provider/providerDashboard") ? "bg-blue-700" : ""
           }`}
         >
           <FiHome size={20} /> Dashboard
         </button>
 
         <button
-          onClick={() => navigate("/admin/users")}
+          onClick={() => navigate("/provider/request")}
           className={`flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-800 transition ${
-            isActive("/admin/users") ? "bg-blue-700" : ""
+            isActive("/provider/request") ? "bg-blue-700" : ""
           }`}
         >
-          <FiSettings size={20} /> Facility
+          <FiSettings size={20} /> Request
         </button>
 
         <button
@@ -43,7 +43,7 @@ export default function AdminSidebar({ sidebarOpen }) {
             isActive("/admin/providers") ? "bg-blue-700" : ""
           }`}
         >
-          <FiUsers size={20} /> Providers
+          <FiUsers size={20} /> Services
         </button>
 
         <button

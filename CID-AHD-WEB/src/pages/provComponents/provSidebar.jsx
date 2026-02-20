@@ -47,12 +47,12 @@ export default function AdminSidebar({ sidebarOpen }) {
         </button>
 
         <button
-          onClick={() => navigate("/admin/settings")}
+          onClick={() => navigate("/provider/reports")}
           className={`flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-800 transition ${
-            isActive("/admin/settings") ? "bg-blue-700" : ""
+            isActive("/provider/reports") ? "bg-blue-700" : ""
           }`}
         >
-          <FiSettings size={20} /> Settings
+          <FiSettings size={20} /> Reports
         </button>
 
         <button

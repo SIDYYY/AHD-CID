@@ -7,22 +7,21 @@ import Providers from "./pages/admin/providers";
 import Sidebar from "./pages/components/sidebar";
 import Reports from "./pages/provider/reports";
 import ProvSidebar from "./pages/provComponents/provSidebar";
-import Request from "./pages/provider/request"
-// import Unauthorized from "./pages/Unauthorized";
+import Request from "./pages/provider/request";
+import AddVideo from "./pages/admin/AddVideo"; // Import AddVideo
 
-    
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/admin/adminDashboard" element={<Admin />} />
       <Route path="/admin/providers" element={<Providers />} />
+      <Route path="/admin/addvideo" element={<AddVideo />} /> {/* Add this route */}
       <Route path="/provider/reports" element={<Reports />} />
       <Route path="/provider/providerDashboard" element={<Provider />} />
       <Route path="/components/sidebar" element={<Sidebar />} />
       <Route path="/provComponents/provSidebar" element={<ProvSidebar />} />
       <Route path="/provider/request" element={<Request />} />
-      {/* <Route path="/unauthorized" element={<Unauthorized />} /> */}
     </Routes>
   );
 }

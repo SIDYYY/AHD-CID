@@ -16,59 +16,12 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
+
 
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
- {/* NEW VIDEO*/}
-  const [title, setTitle] = useState("")
-  const [videoFile, setVideoFile] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  const handleUpload = async () => {
-
-  if (!videoFile || !title) {
-    alert("Please add title and video")
-    return
-  }
-
-  setLoading(true)
-
-  const fileName = `${Date.now()}-${videoFile.name}`
-
-  const { error: uploadError } = await supabase.storage
-    .from("videos")
-    .upload(fileName, videoFile)
-
-  if (uploadError) {
-    alert(uploadError.message)
-    setLoading(false)
-    return
-  }
-
-  const { data } = supabase.storage
-    .from("videos")
-    .getPublicUrl(fileName)
-
-  const { error: insertError } = await supabase
-    .from("videos")
-    .insert([
-      {
-        title: title,
-        video_url: data.publicUrl
-      }
-    ])
-
-  if (insertError) {
-    alert(insertError.message)
-    setLoading(false)
-    return
-  }
-
-  alert("Video uploaded successfully 🎉")
-  setTitle("")
-  setVideoFile(null)
-  setLoading(false)
-}
+  const navigate = useNavigate();
 
   // Dashboard stats
   const [stats, setStats] = useState({
@@ -246,33 +199,9 @@ export default function AdminDashboard() {
           </div>
 
           <div style={{ marginTop: "30px", padding: "20px", background: "#f5f5f5", borderRadius: "10px" }}>
-  {/* VIDEO UPLOAD*/}
-  <h3>Upload Activity Video</h3>
+          </div>
 
-  <input
-    type="text"
-    placeholder="Video Title"
-    value={title}
-    onChange={(e) => setTitle(e.target.value)}
-  />
-
-  <br /><br />
-
-  <input
-    type="file"
-    accept="video/*"
-    onChange={(e) => setVideoFile(e.target.files[0])}
-  />
-
-  <br /><br />
-
-  <button onClick={handleUpload} disabled={loading}>
-    {loading ? "Uploading..." : "Upload"}
-  </button>
-</div>
-
-
-
+        
 
 
         </main>

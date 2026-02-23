@@ -1,6 +1,6 @@
 // src/components/AdminSidebar.jsx
 import React from "react";
-import { FiHome, FiUsers, FiSettings, FiLogOut } from "react-icons/fi";
+import { FiHome, FiUsers, FiSettings, FiLogOut, FiVideo } from "react-icons/fi"; // Added FiVideo icon
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function AdminSidebar({ sidebarOpen }) {
@@ -44,6 +44,16 @@ export default function AdminSidebar({ sidebarOpen }) {
           }`}
         >
           <FiUsers size={20} /> Providers
+        </button>
+
+        {/* New Add Video button */}
+        <button
+          onClick={() => navigate("/admin/addvideo")}
+          className={`flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-800 transition ${
+            isActive("/admin/addvideo") ? "bg-blue-700" : ""
+          }`}
+        >
+          <FiVideo size={20} /> Add Video
         </button>
 
         <button

@@ -60,10 +60,15 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-10 rounded-xl shadow-md w-full max-w-md"
+        className="bg-white p-10 rounded-xl shadow-md border-[#0c4799] border w-full max-w-md "
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          DASH Login
+                <img
+          src="/src/assets/images/logo.png"
+          alt="Admin Avatar"
+          className="w-100 h-90 rounded-full object-cover align-middle"
+        />
+        <h2 className="text-2xl font-bold my-6 text-center">
+          CID AHD Portal
         </h2>
 
         {/* Error message */}

@@ -17,10 +17,14 @@ import {
   Legend,
 } from "recharts";
 import { useNavigate } from "react-router-dom";
+import AddVideoModal from "../components/addVidModal";
+import ManageVideosModal from "../components/manageVidModal";
 
 
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showAddVideo, setShowAddVideo] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
   const navigate = useNavigate();
 
   // Dashboard stats
@@ -99,7 +103,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar sidebarOpen={sidebarOpen} />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <div className="flex-1 flex flex-col transition-all duration-300">
         {/* Header */}
@@ -127,6 +131,56 @@ export default function AdminDashboard() {
         {/* Dashboard Content */}
         <main className="flex-1 p-6 overflow-y-auto">
           {/* Top Cards */}
+
+
+          <div className="mt-10">
+     <div className="mb-10 bg-white rounded-2xl shadow-lg p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100">
+    
+    {/* Left Content */}
+    <div >
+      <h2 className="text-xl font-bold text-gray-800">
+        New Oro Youth Center Video?
+      </h2>
+      <p className="text-gray-500 mt-1 max-w-xl">
+        Upload and manage official YouTube videos for the Oro Youth Center.
+        These videos will be visible to users across the platform.
+      </p>
+    </div>
+
+    {/* Action Button */}
+    <div className="flex gap-4">
+    <button
+      onClick={() => setShowAddVideo(true)}
+      className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg transition-all duration-200"
+    >
+      <span className="text-lg">＋</span>
+      Add Video
+    </button>
+
+    <button
+      onClick={() => setShowVideoModal(true)}
+      className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:bg-blue-700 hover:shadow-lg transition-all duration-200"
+    >
+      <span className="text-lg"></span>
+      Manage Videos
+    </button>
+    </div>
+  </div>
+</div>
+
+<AddVideoModal
+  isOpen={showAddVideo}
+  onClose={() => setShowAddVideo(false)}
+  onSuccess={() => {
+  }}
+/>
+
+<ManageVideosModal
+  isOpen={showVideoModal}
+  onClose={() => setShowVideoModal(false)}
+  onSuccess={() => {
+  }}
+/>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div className="bg-white p-6 rounded-xl shadow">
               <h2 className="font-semibold text-lg mb-2">Total Users</h2>
